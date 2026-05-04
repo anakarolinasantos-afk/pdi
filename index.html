@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDI – Desenvolvimento de Comunicação</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --deep: #16213e;
+    --accent: #e63946;
+    --gold: #f4a261;
+    --light: #f8f5f0;
+    --muted: #6b7280;
+    --border: #e2ddd6;
+    --success: #2d6a4f;
+    --warning: #e76f51;
+    --card-bg: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--deep);
+    color: white;
+    padding: 48px 60px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: rgba(230,57,70,0.15);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 30%;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(244,162,97,0.1);
+  }
+  .header-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .header-subtitle {
+    color: rgba(255,255,255,0.6);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    position: relative;
+  }
+  .header-meta {
+    display: flex;
+    gap: 32px;
+    margin-top: 28px;
+    position: relative;
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 3px; }
+  .meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255,255,255,0.45); }
+  .meta-value { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.9); }
+
+  /* LAYOUT */
+  .container { max-width: 1100px; margin: 0 auto; padding: 48px 40px; }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--deep);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* DADOS DO CASO */
+  .dados-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .dado-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    border-top: 3px solid var(--accent);
+    transition: box-shadow 0.2s;
+  }
+  .dado-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.07); }
+  .dado-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 6px; }
+  .dado-value { font-size: 16px; font-weight: 600; color: var(--deep); }
+
+  /* PARTES ENVOLVIDAS */
+  .partes-section { margin-bottom: 48px; }
+  .partes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .parte-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .parte-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+  .parte-icon {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin: 0 auto 12px;
+  }
+  .parte-icon.prestador { background: #fef3c7; }
+  .parte-icon.interna { background: #dbeafe; }
+  .parte-icon.cliente { background: #dcfce7; }
+  .parte-name { font-weight: 700; font-size: 15px; color: var(--deep); margin-bottom: 4px; }
+  .parte-role { font-size: 12px; color: var(--muted); }
+  .parte-arrow {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: var(--border);
+    padding-top: 20px;
+  }
+
+  /* TABELA DE CLIENTES / PROCESSOS */
+  .table-section { margin-bottom: 48px; }
+  .table-wrapper {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--deep); }
+  thead th {
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 14px 18px;
+    text-align: left;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafaf8; }
+  tbody td { padding: 14px 18px; font-size: 14px; color: var(--ink); }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-ok { background: #dcfce7; color: #166534; }
+  .badge-alert { background: #fef9c3; color: #854d0e; }
+  .badge-error { background: #fee2e2; color: #991b1b; }
+
+  /* TIMELINE */
+  .timeline-section { margin-bottom: 48px; }
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--gold));
+    border-radius: 2px;
+  }
+  .timeline-item { position: relative; margin-bottom: 28px; }
+  .timeline-item:last-child { margin-bottom: 0; }
+  .timeline-dot {
+    position: absolute;
+    left: -26px; top: 4px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  .timeline-dot.gold { background: var(--gold); box-shadow: 0 0 0 2px var(--gold); }
+  .timeline-dot.green { background: var(--success); box-shadow: 0 0 0 2px var(--success); }
+  .timeline-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .timeline-step {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--muted); margin-bottom: 5px;
+  }
+  .timeline-title { font-weight: 600; font-size: 15px; color: var(--deep); margin-bottom: 6px; }
+  .timeline-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* ANÁLISE DE PRAZOS */
+  .prazo-section { margin-bottom: 48px; }
+  .prazo-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .prazo-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .prazo-card.standard { border-left: 4px solid var(--success); }
+  .prazo-card.fora { border-left: 4px solid var(--accent); }
+  .prazo-card-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--muted); margin-bottom: 10px;
+  }
+  .prazo-card-title { font-weight: 700; font-size: 17px; color: var(--deep); margin-bottom: 8px; }
+  .prazo-card-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .prazo-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px; font-weight: 900;
+    margin: 12px 0 4px;
+  }
+  .prazo-value.ok { color: var(--success); }
+  .prazo-value.nok { color: var(--accent); }
+
+  /* IMPACTOS */
+  .impactos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .impacto-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+  }
+  .impacto-icon { font-size: 28px; margin-bottom: 10px; }
+  .impacto-title { font-weight: 700; font-size: 14px; color: var(--deep); margin-bottom: 6px; }
+  .impacto-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* CONCLUSÃO */
+  .conclusao-box {
+    background: var(--deep);
+    color: white;
+    border-radius: 14px;
+    padding: 36px 40px;
+    margin-bottom: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .conclusao-box::before {
+    content: '"';
+    font-family: 'Playfair Display', serif;
+    font-size: 160px;
+    position: absolute;
+    top: -30px; right: 20px;
+    color: rgba(255,255,255,0.05);
+    line-height: 1;
+  }
+  .conclusao-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+    color: var(--gold); margin-bottom: 14px;
+  }
+  .conclusao-text {
+    font-size: 16px; line-height: 1.75;
+    color: rgba(255,255,255,0.88);
+    position: relative;
+  }
+
+  /* APRENDIZADOS */
+  .aprendizados-section { margin-bottom: 48px; }
+  .aprendizados-list { display: flex; flex-direction: column; gap: 12px; }
+  .aprendizado-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .aprendizado-num {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .aprendizado-text { font-size: 14px; line-height: 1.6; color: var(--ink); }
+  .aprendizado-text strong { color: var(--deep); }
+
+  /* FOOTER */
+  .footer {
+    background: var(--deep);
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+  .footer span { color: rgba(255,255,255,0.8); font-weight: 600; }
+
+  @media (max-width: 700px) {
+    .header { padding: 32px 24px; }
+    .container { padding: 32px 20px; }
+    .partes-grid { grid-template-columns: 1fr; }
+    .prazo-compare { grid-template-columns: 1fr; }
+    .header-meta { flex-wrap: wrap; gap: 16px; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .dado-card, .parte-card, .timeline-content, .prazo-card, .impacto-card, .aprendizado-item {
+    animation: fadeUp 0.4s ease both;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-badge">PDI · Desenvolvimento de Comunicação</div>
+  <h1>Relatório de Caso:<br>Cobrança de Transporte Rodoviário</h1>
+  <p class="header-subtitle">Situação vivenciada — prazo fora do padrão Kaizen</p>
+  <div class="header-meta">
+    <div class="meta-item">
+      <span class="meta-label">Cliente</span>
+      <span class="meta-value">Gravia</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Pedido</span>
+      <span class="meta-value">K552</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Prestador</span>
+      <span class="meta-value">Transportadora Borba</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Equipe Impactada</span>
+      <span class="meta-value">Administrativo Financeiro</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- DADOS DO CASO -->
+  <h2 class="section-title">Dados do Caso</h2>
+  <div class="dados-grid">
+    <div class="dado-card">
+      <div class="dado-label">Cliente Final</div>
+      <div class="dado-value">Gravia</div>
+    </div>
+    <div class="dado-card">
+      <div class="dado-label">Número do Pedido</div>
+      <div class="dado-value">K552</div>
+    </div>
+    <div class="dado-card">
+      <div class="dado-label">Prestador de Serviço</div>
+      <div class="dado-value">Transp. Borba</div>
+    </div>
+    <div class="dado-card">
+      <div class="dado-label">Área Impactada</div>
+      <div class="dado-value">Adm. Financeiro</div>
+    </div>
+    <div class="dado-card">
+      <div class="dado-label">Padrão Kaizen</div>
+      <div class="dado-value">5 dias após entrega</div>
+    </div>
+    <div class="dado-card">
+      <div class="dado-label">Partes Envolvidas</div>
+      <div class="dado-value">3 partes</div>
+    </div>
+  </div>
+
+  <!-- PARTES ENVOLVIDAS -->
+  <div class="partes-section">
+    <h2 class="section-title">Partes Envolvidas na Comunicação</h2>
+    <div class="partes-grid">
+      <div class="parte-card">
+        <div class="parte-icon prestador">🚛</div>
+        <div class="parte-name">Transportadora Borba</div>
+        <div class="parte-role">Prestador de Serviço</div>
+      </div>
+      <div class="parte-card">
+        <div class="parte-icon interna">🏢</div>
+        <div class="parte-name">Equipe Kaizen</div>
+        <div class="parte-role">Equipe Interna · Adm. Financeiro</div>
+      </div>
+      <div class="parte-card">
+        <div class="parte-icon cliente">👤</div>
+        <div class="parte-name">Gravia</div>
+        <div class="parte-role">Cliente Final · Pedido K552</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABELA DE PROCESSOS -->
+  <div class="table-section">
+    <h2 class="section-title">Processos Analisados pela Transportadora</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Tipo de Negociação</th>
+            <th>Proposta Inicial</th>
+            <th>Padrão Kaizen</th>
+            <th>Resultado</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Geroaço</strong></td>
+            <td>Primeira negociação</td>
+            <td>30% entrada + saldo pós-entrega</td>
+            <td>100% — 5 dias após entrega</td>
+            <td>Ajustado ao padrão</td>
+            <td><span class="badge badge-ok">✓ Resolvido</span></td>
+          </tr>
+          <tr>
+            <td><strong>Manfil</strong></td>
+            <td>Primeira negociação</td>
+            <td>30% entrada + saldo pós-entrega</td>
+            <td>100% — 5 dias após entrega</td>
+            <td>Ajustado ao padrão</td>
+            <td><span class="badge badge-ok">✓ Resolvido</span></td>
+          </tr>
+          <tr>
+            <td><strong>Gravia</strong></td>
+            <td>Negociação prévia direta</td>
+            <td>Faturamento integral pós-entrega</td>
+            <td>100% — 5 dias após entrega</td>
+            <td>Prazo acima do padrão detectado</td>
+            <td><span class="badge badge-error">⚠ Impacto</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ANÁLISE DE PRAZOS -->
+  <div class="prazo-section">
+    <h2 class="section-title">Análise Comparativa de Prazos</h2>
+    <div class="prazo-compare">
+      <div class="prazo-card standard">
+        <div class="prazo-card-label">Padrão Kaizen (correto)</div>
+        <div class="prazo-card-title">Faturamento Integral</div>
+        <div class="prazo-value ok">5 dias</div>
+        <div class="prazo-card-desc">Prazo máximo após a entrega para emissão de fatura. Garante o recebimento do <em>profit</em> dentro do ciclo financeiro esperado.</div>
+      </div>
+      <div class="prazo-card fora">
+        <div class="prazo-card-label">Caso Gravia (identificado)</div>
+        <div class="prazo-card-title">Prazo Aplicado</div>
+        <div class="prazo-value nok">Acima</div>
+        <div class="prazo-card-desc">Prazo aplicado estava <strong>significativamente acima do padrão</strong>, gerando impacto no fluxo de recebimento do <em>profit</em> da Kaizen.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="timeline-section">
+    <h2 class="section-title">Linha do Tempo da Situação</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-step">Passo 1</div>
+          <div class="timeline-title">Contato da Transportadora Borba</div>
+          <div class="timeline-desc">A Transportadora Borba entrou em contato para definir os prazos de cobrança dos processos fechados: Geroaço, Manfil e Gravia.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot gold"></div>
+        <div class="timeline-content">
+          <div class="timeline-step">Passo 2</div>
+          <div class="timeline-title">Negociação: Geroaço e Manfil</div>
+          <div class="timeline-desc">A transportadora propôs 30% de entrada + saldo após entrega. Foi alinhado que o padrão Kaizen exige faturamento integral em até 5 dias após a entrega. Ambos os casos foram ajustados.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-step">Passo 3</div>
+          <div class="timeline-title">Identificação do Problema — Gravia</div>
+          <div class="timeline-desc">A transportadora indicou negociação prévia direta com a Gravia. Ao receber o faturamento, identificou-se que o prazo aplicado estava significativamente acima do padrão, impactando o recebimento do profit.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot gold"></div>
+        <div class="timeline-content">
+          <div class="timeline-step">Passo 4</div>
+          <div class="timeline-title">Análise do Dilema</div>
+          <div class="timeline-desc">Alterar para o prazo padrão poderia gerar questionamentos do cliente. Manter o prazo original impactaria o fluxo interno. Situação comunicada à gerência e ao time administrativo.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot green"></div>
+        <div class="timeline-content">
+          <div class="timeline-step">Passo 5</div>
+          <div class="timeline-title">Ação: Alinhamento e Ajuste de Expectativas</div>
+          <div class="timeline-desc">Gerência comunicada previamente. Time administrativo sinalizado. Expectativas alinhadas para evitar desgaste com o cliente e garantir alinhamento interno.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPACTOS -->
+  <h2 class="section-title">Impactos Identificados</h2>
+  <div class="impactos-grid">
+    <div class="impacto-card">
+      <div class="impacto-icon">💰</div>
+      <div class="impacto-title">Financeiro</div>
+      <div class="impacto-desc">Prazo fora do padrão atrasou o recebimento do <em>profit</em> da Kaizen, afetando o fluxo de caixa esperado.</div>
+    </div>
+    <div class="impacto-card">
+      <div class="impacto-icon">🤝</div>
+      <div class="impacto-title">Relacionamento</div>
+      <div class="impacto-desc">Risco de questionamento por parte do cliente Gravia caso o prazo fosse alterado sem comunicação prévia.</div>
+    </div>
+    <div class="impacto-card">
+      <div class="impacto-icon">⚙️</div>
+      <div class="impacto-title">Operacional</div>
+      <div class="impacto-desc">A equipe Administrativo Financeiro precisou ajustar expectativas e recalibrar o ciclo de recebimento para este pedido.</div>
+    </div>
+    <div class="impacto-card">
+      <div class="impacto-icon">📋</div>
+      <div class="impacto-title">Processo</div>
+      <div class="impacto-desc">Evidenciou a necessidade de maior alinhamento nas negociações diretas do prestador com o cliente final antes do fechamento.</div>
+    </div>
+  </div>
+
+  <!-- CONCLUSÃO -->
+  <div class="conclusao-box">
+    <div class="conclusao-label">Conclusão</div>
+    <div class="conclusao-text">
+      A situação reforça a importância de uma <strong style="color:var(--gold)">comunicação clara e alinhada entre todas as partes envolvidas</strong> — desde a negociação com o prestador até o direcionamento interno — garantindo previsibilidade e evitando impactos operacionais e de relacionamento.
+    </div>
+  </div>
+
+  <!-- APRENDIZADOS -->
+  <div class="aprendizados-section">
+    <h2 class="section-title">Aprendizados e Recomendações</h2>
+    <div class="aprendizados-list">
+      <div class="aprendizado-item">
+        <div class="aprendizado-num">1</div>
+        <div class="aprendizado-text"><strong>Validar prazos de cobrança antes do fechamento:</strong> Negociações diretas entre prestador e cliente final devem ser verificadas para garantir conformidade com o padrão Kaizen (5 dias após entrega).</div>
+      </div>
+      <div class="aprendizado-item">
+        <div class="aprendizado-num">2</div>
+        <div class="aprendizado-text"><strong>Comunicação proativa com a gerência:</strong> Antecipar situações de risco — como prazos fora do padrão — evita desgaste com o cliente e alinha expectativas internas.</div>
+      </div>
+      <div class="aprendizado-item">
+        <div class="aprendizado-num">3</div>
+        <div class="aprendizado-text"><strong>Sinalização prévia ao time Administrativo Financeiro:</strong> Informar antecipadamente permite ajuste dos controles de recebimento, evitando impacto no fluxo de caixa.</div>
+      </div>
+      <div class="aprendizado-item">
+        <div class="aprendizado-num">4</div>
+        <div class="aprendizado-text"><strong>Padronização como proteção a todas as partes:</strong> O padrão Kaizen protege o relacionamento com o cliente e a saúde financeira interna. Desvios devem ser tratados com antecedência e transparência.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  Relatório elaborado para o <span>PDI – Desenvolvimento de Comunicação</span> &nbsp;·&nbsp; Kaizen &nbsp;·&nbsp; Atenciosamente / Kind Regards / 亲切地
+  <br><br><span style="font-size:14px; letter-spacing:1px;">By Ana Karolina</span>
+</div>
+
+</body>
+</html>
